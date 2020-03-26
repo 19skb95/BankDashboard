@@ -1,0 +1,180 @@
+﻿@using BankDashboard.Models;
+@using BankDashboard.Common;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        div[class="dataTables_filter"] {
+            display: none;
+        }
+    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title :: Bank Muscat</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Scripts/dt/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/jquery-ui.min.css" rel="stylesheet" />
+    <style>
+        .width20 {
+            width: 18%;
+            float: left;
+        }
+
+        ul.nav.flex-column.top__nav {
+            width: 82%;
+            float: left;
+        }
+
+            ul.nav.flex-column.top__nav li {
+                width: 14%;
+                float: left;
+                line-height: 19px;
+                margin-top: 47px;
+                text-align: center;
+            }
+
+            ul.nav.flex-column.top__nav a {
+                color: black !important;
+            }
+
+        .width20 {
+            width: 18%;
+            float: left;
+            margin-top: 55px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body style="width:98%">
+
+    <div class="row navbar-fixed-top" style="margin-top: -26px;background-color:white;padding-right:35px;height: 119px;">
+        <div class="col-md-2">
+            <a href="/Dashboard/index" style="text-decoration:none"><img src="~/Images/logo-bank.jpg" width="215px;" height="119px;" /></a>
+        </div>
+        <div class="col-md-10">
+            <ul class="nav flex-column top__nav">
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("Report"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/Home/NewReportUserWise" style="color: white; ">Reports</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("Balance"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Dashboard/Balance" style="color:white;">Balancing</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("DeviceList"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/DeviceList" style="color:white;">Device List</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("GLAList"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/GLAList" style="color:white;">GL Account</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("ErrorCodeList"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/ErrorCodeList" style="color:white;">Error Code List</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("BinList"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/BNMst" style="color:white;">Bin List</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("Profile"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/ProfilePage" style="color:white;">Profile Page</a>
+                    </li>
+                }
+                @if (((tbl_UserDetail)Session["User"]).GroupPages.Contains("BotMaster"))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/Dashboard/BotMst" style="color:white;">Bot Master</a>
+                    </li>
+                }
+                @*<li class="nav-item">
+                        @(((tbl_UserDetail)Session["User"]).AccountName)
+                    </li>
+                    <li class="nav-item">
+                        <a href='@Url.Action("Logout", "LogIn")'>
+                            <img src='@Url.Content("~/Logout.png")' />&nbsp; Logout
+                        </a>
+                    </li>*@
+            </ul>
+            <div class="width20">
+                <div class="name1"><b>   @(((tbl_UserDetail)Session["User"]).AccountName)</b></div>
+
+                <ul class="nav navbar-nav navbar-right defaa">
+                    <li>
+                        <a href='@Url.Action("Logout", "LogIn")' style="padding-top: 5px;padding-bottom: 5px;padding-left: 5px; padding-right: 5px;">
+                            <img src='@Url.Content("~/Logout.png")' />Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row container-fluid" style="MARGIN-LEFT: -29PX;margin-right: -57PX;  margin-top:43px">
+        @*<div class="col-md-1">
+
+            </div>*@
+
+        <div class="col-md-12">
+            @RenderBody()
+
+        </div>
+        @*<div class="col-md-1">
+
+            </div>*@
+    </div>
+    <div class="container body-content">
+
+        <hr />
+        <footer>
+            <p><center>&copy; @DateTime.Now.Year - Grid Infocom Pvt. Ltd.</center></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<script src="~/Scripts/dt/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var table = $('#example').DataTable({
+            fixedHeader: true
+        });
+    });
+    $(document).ready(function () {
+        debugger
+        var table = $('#example').DataTable();
+        $('#example tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+            // alert('You clicked on ' + data[0] + '\'s row');
+        });
+    });
+    $(".invoice").datepicker(
+        {
+            dateFormat: 'dd-M-yy',
+            timepicker: false,
+
+        }
+    );
+     //$("#lblmsg").hide(4000)
+</script>
+

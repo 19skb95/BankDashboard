@@ -1,0 +1,423 @@
+﻿
+@{
+    ViewBag.Title = "Manageuser";
+    // Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+
+<div class="well-sm" style="background-color: #f7714df2;color: white;">
+    <h2>MANAGE USER</h2>
+</div>
+<div class="jumbotron">
+
+
+
+    <div class="container-fluid">
+
+        <form action="/Dashboard/UserDetail" method="post">
+
+            @if (ViewBag.obj == null)
+            {
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label>User Name:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" maxlength="50" required name="User_name" onchange="CheckifUserExist(this,'User Name')" class="form-control" />
+                    </div>
+                </div>
+
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Password:  </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="password" maxlength="20" required name="Password" id="pwdtxt" class="form-control" />
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label>Confirm Password:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="password" maxlength="20" required name="PasswordCnf" onchange="CheckPWd(this)" class="form-control" />
+                    </div>
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Email ID:   </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="email" maxlength="100" onchange="CheckifUserExist(this,'EmailId')" required name="EmailId" class="form-control" />
+                    </div>
+
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Is Active:   </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="checkbox" id="IsActive" name="IsActive" value="TRUE" />
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> User Type:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="UserType" required onchange="usertypechanged(this)">
+                            <option value="">--Select--</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Checker">Checker</option>
+                            <option value="Maker">Maker</option>
+                            <option value="UM">User Manager</option>
+                        </select>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                    </div>
+                    <div class="col-sm-8" id="isparamdiv" style="display:none">
+                        <input type="checkbox" id="IsParameterUser" name="IsParameterUser" value="TRUE" />
+                        Check if user allowed to change parameters or not.
+                    </div>
+
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-5">
+                        <span style="color:red" id="errtxt"></span>
+                        @if (TempData["Success"] != null)
+                        {
+                            <span style="color:green">@TempData["Success"]</span>
+                        }
+                        @if (TempData["Error"] != null)
+                        {
+                            <span style="color:red">@TempData["Error"]</span>
+                        }
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-10 right">
+                        <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Save?')" value="Save" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                    </div>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" name="hid" value="@ViewBag.hid" />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label>User Name:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" maxlength="50" required value="@ViewBag.obj.User_name" name="User_name" onchange="CheckifUserExist(this,'User Name')" class="form-control" />
+                    </div>
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Password:   </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="password" maxlength="20" required value="@ViewBag.obj.Password" name="Password" id="pwdtxt" class="form-control" />
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label>Confirm Password:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="password" maxlength="20"  name="PasswordCnf" onchange="CheckPWd(this)" class="form-control" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Email ID:   </label>
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="email" maxlength="100" required value="@ViewBag.obj.EmailId" onchange="CheckifUserExist(this,'EmailId')" name="EmailId" class="form-control" />
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> Is Active:   </label>
+                    </div>
+                    <div class="col-sm-4">
+                        @if (ViewBag.obj.IsActive == true)
+                        {
+                            <input type="checkbox" id="IsActive" name="IsActive" checked value="TRUE" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="IsActive" name="IsActive" value="TRUE" />
+                        }
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                        <label> User Type:</label>
+                    </div>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="UserType" required onchange="usertypechanged(this)">
+                            <option value="">--Select--</option>
+                            <option selected hidden value="@ViewBag.obj.UserType.ToString()">
+                                @(ViewBag.obj.UserType.ToString() == "UM" ? "User Manager" : ViewBag.obj.UserType.ToString())
+
+                            </option>
+                            <option value="Admin">Admin</option>
+                            <option value="Checker">Checker</option>
+                            <option value="Maker">Maker</option>
+                            <option value="UM">User Manager</option>
+                        </select>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-sm-2" style="text-align:right">
+                    </div>
+                    @if (ViewBag.obj.UserType.ToString() == "Checker" || ViewBag.obj.UserType.ToString() == "Maker")
+                    {
+                        <div class="col-sm-8" id="isparamdiv">
+                            @if (ViewBag.obj.IsParameterUser == true)
+                            {
+                                <input type="checkbox" id="IsParameterUser" checked name="IsParameterUser" value="TRUE" />
+
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="IsParameterUser" name="IsParameterUser" value="TRUE" />
+
+                            }
+                            Check if user allowed to change parameters or not.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-sm-8" id="isparamdiv" style="display:none">
+                            <input type="checkbox" id="IsParameterUser" name="IsParameterUser" value="TRUE" />
+                            Check if user allowed to change parameters or not.
+                        </div>
+                    }
+
+
+                </div>
+
+
+                @*<div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>    </label>
+                        </div>
+                        <div class="col-sm-4">
+                            <table>
+                                <tr>
+                                    @if (ViewBag.obj.UserType.ToString().Trim() == "Maker")
+                                    {
+
+                                        <td style="width:26px"> <input type="radio" class="btn btn-sm radio" name="UserType" checked value="Maker"></td>
+                                        <th style="width:53px"><span>Maker</span></th>
+                                        <td style="width:26px"> <input type="radio" class="btn btn-sm radio" name="UserType" value="Checker"></td>
+                                        <th style="width:53px"><span>Checker</span></th>
+                                    }
+                                    else
+                                    {
+
+                                        <td style="width:26px"> <input type="radio" class="btn btn-sm radio" name="UserType" value="Maker"></td>
+                                        <th style="width:53px"><span>Maker</span></th>
+                                        <td style="width:26px"> <input type="radio" class="btn btn-sm radio" name="UserType" checked value="Checker"></td>
+                                        <th style="width:53px"><span>Checker</span></th>
+
+                                    }
+
+                                </tr>
+                            </table>
+                        </div>
+                    </div>*@
+                <br />
+                <div class="row">
+                    <div class="col-sm-5">
+                        <span style="color:red" id="errtxt"></span>
+                        @if (TempData["Success"] != null)
+                        {
+                            <span style="color:green">@TempData["Success"]</span>
+                        }
+                        @if (TempData["Error"] != null)
+                        {
+                            <span style="color:red">@TempData["Error"]</span>
+                        }
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-10 right">
+                        <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Edit" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                    </div>
+                </div>
+            }
+
+
+        </form>
+    </div>
+
+</div>
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                    <thead>
+                        <tr>
+
+                            <th>User Name</th>
+                            <th>User Type</th>
+                            <th>Is Active</th>
+                            <th>Entry By</th>
+                            <th>Entry Time</th>
+                            <th>Updated By</th>
+                            <th>Update Time</th>
+
+                            <th>Edit</th>
+
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (ViewBag.list != null)
+                        {
+
+                            foreach (var item in ViewBag.list)
+                            {
+                                <tr>
+
+                                    <td>@item.User_name</td>
+                                    <td>@item.UserType</td>
+
+                                    <td>
+                                        @if (item.IsActive == true)
+                                        {
+                                            <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                        }
+                                    </td>
+                                    <td>@item.EntryBy</td>
+                                    <td>@item.EntryTime.ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                    <td>@item.UpdateBy</td>
+                                    @if (item.UpdateTime != null)
+                                    {
+                                        <td>
+                                            @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+
+
+                                    <td>
+                                        <a href="/Admin/UserDetail?id=@item.ID"><span><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                    </td>
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>No data in the table.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function CheckPWd(pwdtxt) {
+        debugger
+        if (pwdtxt.value != $("#pwdtxt").val()) {
+            $("#errtxt").text("Password not matched!!.");
+            pwdtxt.value = "";
+            $("#pwdtxt").val('')
+        }
+    }
+
+
+    function CheckifUserExist(text, type) {
+        debugger
+        if (/\s/g.test(text.value)) {
+            $("#errtxt").text("Please remove space from " + type + ".");
+            text.value = '';
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/Admin/CheckUser",
+                contentType: "application/json; charset=utf-8",
+                data: '{"userdata":"' + text.value + '","field":"' + type + '"}',
+                dataType: "html",
+                success: function (data) {
+                    if (data != 1) {
+                        text.value = '';
+                        $("#errtxt").text(type + " already exists.");
+                    } else {
+                        $("#errtxt").text("");
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        }
+    }
+    function clicked(msg) {
+        debugger
+        if (confirm(msg)) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+    function usertypechanged(utype) {
+        debugger
+        if (utype.value == 'Checker' || utype.value == 'Maker') {
+            $("#isparamdiv").show();
+        } else {
+            $("#isparamdiv").hide();
+        }
+    }
+
+</script>

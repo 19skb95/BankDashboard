@@ -1,0 +1,166 @@
+﻿@*@model BankMuscat.MaxDisputedMachine*@
+
+@model IEnumerable<BankMuscat.MaxDisputedMachine>
+
+@{
+    ViewBag.Title = "GetMaxDisputedMachine";
+    //  Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/Js/ReportsUserWise.js"></script>
+<div class="well-sm" style="background-color: #f7714df2;color: white;height:80%">
+    <h2>Max Disputed Machine Detail</h2>
+</div>
+<div class="jumbotron">
+    <div class="container-fluid">
+        @using (Html.BeginForm("ReportsUserWise", "Home", FormMethod.Get, new { id = "SearchUserType" }))
+        {
+            <fieldset>
+                <legend style="color:black;font-size:15px;"><b>Filters:</b></legend>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <b>From Date:</b><input type="text" id="startFilterDate" name="startDate" class="form-control invoice" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <b>To Date:</b><input type="text" id="endFilterDate" name="endDate" class="form-control invoice" autocomplete="off" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <b>Terminal Id</b><input type="text" id="txtTerminalId" name="terminaldId" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <span><b>Status</b></span>
+                        @Html.DropDownList("checkStatus", new List<SelectListItem> {
+                        new SelectListItem{ Text="Select", Value = "1" },
+                        new SelectListItem{ Text="Completed", Value = "2" },
+                        new SelectListItem{ Text="Open", Value = "3" },
+                        new SelectListItem{ Text="Initiated", Value = "4" }}, new { @id = "ddlStatusList", @class = "form-control" })
+                        <input type="hidden" id="status" name="status" value="" />
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-4">
+                        <span><b>Select Report Type</b></span>
+                        @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserType == "Admin")
+                        {
+                            @Html.DropDownList("userReportType", new List<SelectListItem> {
+                        new SelectListItem{ Text="Select", Value = "1" },
+                        new SelectListItem{ Text="All Pending Transactions", Value = "2" },
+                        new SelectListItem{ Text="All Approval Transactions", Value = "3" },
+                        new SelectListItem{ Text="All Errorneous Transactions", Value = "4" },
+                   new SelectListItem{ Text="All Maker Transactions", Value = "5" },
+                   new SelectListItem{ Text="All Checker Transactions", Value = "6" },
+                   new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "7" },
+                   new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "8" },
+                       new SelectListItem{ Text="User Wise Transactions", Value = "9" }}, new { @class = "form-control" })
+                        }
+                        else
+                        {
+                            @Html.DropDownList("userReportType", new List<SelectListItem> {
+                            new SelectListItem{ Text="Select", Value = "1" },
+                            new SelectListItem{ Text="My Pending Transactions", Value = "2" },
+                            new SelectListItem{ Text="My Approval Transactions", Value = "3" },
+                            new SelectListItem{ Text="My All Transactions", Value = "4" },
+                       new SelectListItem{ Text="All Erroreneous Transactions", Value = "5" },
+                       new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "6" },
+                       new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "7" }}, new { @class = "form-control" })
+                        }
+                        @*@Html.DropDownList("userReportType", new List<SelectListItem> {
+             new SelectListItem{ Text="Select", Value = "1" },
+             new SelectListItem{ Text="My Pending Transactions", Value = "2" },
+             new SelectListItem{ Text="My Approval Transactions", Value = "3" },
+             new SelectListItem{ Text="My All Transactions", Value = "4" },
+        new SelectListItem{ Text="All Erroreneous Transactions", Value = "5" },
+        new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "6" },
+        new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "7" }}, new { @class = "form-control" })*@
+                        <input type="hidden" id="reportType" name="reportType" value="" />
+                    </div>
+                    <div class="col-md-8">
+                        <br />
+                        <button type="submit" class="btn btn-info" name="submit" value="Submit" id="btnSearch">
+                            <span class="glyphicon glyphicon-search"></span> View Report
+                        </button>&nbsp;&nbsp;
+                        <button type="button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-refresh"></span> Reset
+                        </button>&nbsp;&nbsp;
+                        <button type="submit" class="btn btn-success" name="download" value="download">
+                            <span class="glyphicon glyphicon-download"></span>Download Report
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        }
+    </div>
+</div>
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TerminalID)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DeviceId)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Make)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TerminalType)
+                            </th>
+                            <th>
+                                @*<text>Bot Start Time</text>*@
+                                @Html.DisplayNameFor(model => model.Count)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @*@if (!string.IsNullOrEmpty(Model.Count))*@
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TerminalID)
+
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.DeviceId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Make)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.TerminalType)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Count)
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        
+                        else
+                        {
+                        <tr><td colspan="5">No Data Found!</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

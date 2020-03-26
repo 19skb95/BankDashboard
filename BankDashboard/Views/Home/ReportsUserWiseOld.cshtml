@@ -1,0 +1,222 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model IPagedList<BankMuscat.UserDetails>
+@*@model IEnumerable<BankMuscat.UserDetails>*@
+
+@{
+    ViewBag.Title = "ReportsUserWise";
+   // Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@*<b>ReportsUserWise</b>*@
+<body>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Js/ReportsUserWise.js"></script>
+    <div class="row" style="margin-left:111px;margin-top:-450px;">
+        <div class="col-md-12">
+            @using (Html.BeginForm("ReportsUserWise", "Home", FormMethod.Get, new { id = "SearchUserType" }))
+            {
+                <fieldset>
+                    <legend style="color:black;font-size:15px;"><b>Filters:</b></legend>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <b>Invoice From Date:</b><input type="text" id="startFilterDate" name="startDate" class="form-control invoice" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <b>Invoice To Date:</b><input type="text" id="endFilterDate" name="endDate" class="form-control invoice" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <b>Terminal Id</b><input type="text" id="txtTerminalId" name="terminaldId" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <span><b>Status</b></span>
+                            @Html.DropDownList("checkStatus", new List<SelectListItem> {
+                            new SelectListItem{ Text="Select", Value = "1" },
+                            new SelectListItem{ Text="Completed", Value = "2" },
+                            new SelectListItem{ Text="Open", Value = "3" },
+                            new SelectListItem{ Text="Initiated", Value = "4" }}, new { @class = "form-control" })
+                            <input type="hidden" id="status" name="status" value="" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span><b>Select Report Type</b></span>
+                            @Html.DropDownList("userReportType", new List<SelectListItem> {
+                            new SelectListItem{ Text="Select", Value = "1" },
+                            new SelectListItem{ Text="My Pending Transactions", Value = "2" },
+                            new SelectListItem{ Text="My Approval Transactions", Value = "3" },
+                            new SelectListItem{ Text="My All Transactions", Value = "4" },
+                       new SelectListItem{ Text="All Erroreneous Transactions", Value = "5" },
+                       new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "6" },
+                       new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "7" }}, new { @class = "form-control" })
+                            <input type="hidden" id="reportType" name="reportType" value="" />
+                        </div>
+                        <div class="col-md-8">
+                            <br />
+                            <button type="submit" class="btn btn-info" name="submit" value="Submit" id="btnSearch">
+                                <span class="glyphicon glyphicon-search"></span> View Report
+                            </button>&nbsp;&nbsp;
+                            <button type="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-refresh"></span> Reset
+                            </button>&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-success" name="download" value="download">
+                                <span class="glyphicon glyphicon-download"></span>Download Report
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+        <div class="col-md-10">
+            <br><br>
+        </div>
+
+    </div>
+
+    <div class="row" style="margin-left:110px;margin-top:-450px;">
+        <div class="col-md-10">
+            <table class="table">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().TerminalID)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().ErrorCode)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().Amount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.First().TransactionTime)
+                    </th>
+                    <th>
+                        <text>Bot Start Time</text>
+                        @*@Html.DisplayNameFor(model => model.BotProcessStartTime)*@
+                    </th>
+                    <th>
+                        <text>Bot End Time</text>
+                        @*@Html.DisplayNameFor(model => model.BotProcessEndTime)*@
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.BotStatus)*@
+                        <text>Bot Status</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.BotRemarks)*@
+                        <text>Bot Remarks</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.UserAction)*@
+                        <text>User Action</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.UserRecommendation)*@
+                        <text>User Recomm.</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.RepeatedClaimNo)*@
+                        <text>Repeated Claim No</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.MakerStatus)*@
+                        <text>Maker Status</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.CheckerStatus)*@
+                        <text>Checker Status</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.CaseStatus)*@
+                        <text>Case Status</text>
+                    </th>
+                    <th>
+                        @*@Html.DisplayNameFor(model => model.SolvedBy)*@
+                        <text>Solved By</text>
+                    </th>
+                    <th>
+                        <text>View</text>
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TerminalID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ErrorCode)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Amount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TransactionTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BotProcessStartTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BotProcessEndTime)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BotStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BotRemarks)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserAction)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UserRecommendation)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RepeatedClaimNo)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MakerStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CheckerStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CaseStatus)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SolvedBy)
+                        </td>
+                        <td>
+                            @using (Html.BeginForm("ViewTransaction", "Home", FormMethod.Post, new { userDetails=item }))
+                            {
+                                <button type="submit" id="btnViewProcess" class="btn btn-info">
+                                    <span class="glyphicon glyphicon-eye-open" data-toggle="tooltip" title="View"></span>
+                                </button>
+                            }
+                            @*@Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            @Html.PagedListPager(Model, page => Url.Action("ReportsUserWise", new {
+           //startDate = Request.QueryString["startDate"],
+           //endDate = Request.QueryString["endDate"],
+           //terminaldId = Request.QueryString["terminaldId"],
+           //status = Request.QueryString["status"],
+           //reportType = Request.QueryString["reportType"],
+           page
+       }))
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+</body>

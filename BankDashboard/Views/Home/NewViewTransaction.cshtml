@@ -1,0 +1,380 @@
+﻿@using BankDashboard.Common;
+@{
+    ViewBag.Title = "ViewTransaction";
+    //Layout = "~/Views/Shared/_Layout1.cshtml";
+    ViewModelClass.ViewTransactionModel Vobj = new ViewModelClass.ViewTransactionModel();
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<style>
+    label {
+        color: #3b6284a3;
+    }
+    /*.text-block {
+        position: absolute;
+        bottom: 8px;
+        right: 96px;
+        background-color: white;
+        color: black;
+        width: 200px;
+        height: 20px;
+        padding-left: 20px;
+        padding-right: 20px;
+        text-align: center;
+    }*/
+</style>
+@if (ViewBag.obj != null)
+{
+    Vobj = (ViewModelClass.ViewTransactionModel)ViewBag.obj;
+    TempData.Keep("Sovedby");
+}
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>View Transaction Detail</h2>
+</div>
+@{TempData.Keep("SearchDetail");}
+<div class="jumbotron">
+    <div class="container-fluid">
+        <form action="/Home/NewViewTransaction?EjID=@Vobj.EJID&feedbackid=@Vobj.FeedBackId" method="post">
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Account No:</b><label>@Vobj.AccountNumber</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b>Mobile No: </b><label>@Vobj.RegMobileNumber</label>
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Customer Name:</b> <label>@Vobj.CustomerName</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b>Email Id:</b><label>@Vobj.RegEmailId</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Card No:</b> <label>@Vobj.CardNumber</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b>Amount:</b>  <label>@Vobj.Amount</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>Repeated Claim No:</b><label>@Vobj.RepeatedClaimNo</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b>Incident Date:</b>  <label>@Vobj.Recordts</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>User Action:</b> <label>@Vobj.User_Action</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b>User Recommendation:</b>
+                            @if (!string.IsNullOrEmpty(Vobj.User_Recommendation) && Vobj.User_Recommendation.Contains("Recommended By BOT"))
+                            {
+
+                                <textarea class="form-control" rows="3" name="User_Recommendation" style="background-color:green">@Vobj.User_Recommendation</textarea>
+
+                            }
+                            else if (!string.IsNullOrEmpty(Vobj.User_Recommendation) && Vobj.User_Recommendation.Contains("Recon Officer"))
+                            {
+                                <textarea class="form-control" rows="3" name="User_Recommendation" style="background-color:yellow">@Vobj.User_Recommendation</textarea>
+                            }
+                            else
+                            {
+                                <textarea class="form-control" rows="3" name="User_Recommendation">@Vobj.User_Recommendation</textarea>
+                            }
+                            @*@Html.DisplayFor(model => model.User_Recommendation)*@
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>CDM Excess Amount:</b>
+                            @if (!string.IsNullOrEmpty(Vobj.CDMBalancingAmount) && long.Parse(Vobj.CDMBalancingAmount) > 0)
+                            {
+                                <label>@Vobj.CDMBalancingAmount</label>
+                            }
+
+                        </div>
+                        <div class="col-md-6">
+                            <b>Counterfeit Amount:</b>  <label>@Vobj.Counterfeit_Amount</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>CDM Shortage Amount:</b>
+                            @if (!string.IsNullOrEmpty(Vobj.CDMBalancingAmount) && long.Parse(Vobj.CDMBalancingAmount) < 0)
+                            {
+                                <label>@Vobj.CDMBalancingAmount</label>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <b>Cash Retracted Amount:</b>  <label>@Vobj.Cash_Retracted_Amount</label>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b>ATM Excess Amount:</b>
+                            @if (!string.IsNullOrEmpty(Vobj.ATMBalancingAmount) && long.Parse(Vobj.ATMBalancingAmount) > 0)
+                            {
+                                <label>@Vobj.ATMBalancingAmount</label>
+                            }
+                        </div>
+                        <div class="col-md-6">
+                            <b>ATM Shortage Amount:</b> @if (!string.IsNullOrEmpty(Vobj.ATMBalancingAmount) && long.Parse(Vobj.ATMBalancingAmount) < 0)
+                            {
+                                <label>@Vobj.ATMBalancingAmount</label>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <b> Maker Status: </b>
+                            <label>@Vobj.Maker_Input</label>
+                        </div>
+                        <div class="col-md-6">
+                            <b> Checker Status: </b>
+                            @*@Html.DisplayFor(model => model.CheckerComment)*@
+                            <label>@Vobj.Checker_Input</label>
+                        </div>
+                    </div>
+                    <br />
+                    @if (Vobj.SubmitEnable.ToLower() == "n")
+                    {
+                        <div class="row">
+                            <div class="col-md-8">
+
+                                <b> Update Status: </b>
+                                <select class="form-control" id="useraction" name="UserAction">
+                                    @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Checker) && !string.IsNullOrEmpty(Vobj.Checker_Input))
+                                    {
+                                        <option value="@Vobj.Checker_Input" selected="selected" hidden>@Vobj.Checker_Input</option>
+                                        <option value="0">Select</option>
+                                    }
+                                    else if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Maker) && !string.IsNullOrEmpty(Vobj.Maker_Input))
+                                    {
+                                        <option value="@Vobj.Maker_Input" selected="selected" hidden>@Vobj.Maker_Input</option>
+                                        <option value="0">Select</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="0" selected>Select</option>
+                                    }
+
+                                    <option value="Approve">Approve</option>
+                                    <option value="Reject">Reject</option>
+                                    <option value="Hold">Hold</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-md-8">
+
+                                <b> Update Status: </b>
+                                <select class="form-control" id="useraction" name="UserAction" required>
+                                    @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Checker) && !string.IsNullOrEmpty(Vobj.Checker_Input))
+                                    {
+                                        <option value="@Vobj.Checker_Input" selected="selected" hidden>@Vobj.Checker_Input</option>
+                                        <option value="0">Select</option>
+                                    }
+                                    else if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Checker) && !string.IsNullOrEmpty(Vobj.Maker_Input))
+                                    {
+                                        <option value="@Vobj.Maker_Input" selected="selected" hidden>@Vobj.Maker_Input</option>
+                                        <option value="0">Select</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="0" selected>Select</option>
+                                    }
+
+                                    <option value="Approve">Approve</option>
+                                    <option value="Reject">Reject</option>
+                                    <option value="Hold">Hold</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    }
+                    <br />
+
+                    @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Checker))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Add Comment:</b> <input type="text" name="Comment" id="cmnt" multiple="true" value="@Vobj.CheckerComment" class="form-control" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Hold Comment:</b> <input type="text" name="CommentHold" id="cmnthold" multiple="true" value="@Vobj.CheckerComment_Hold" class="form-control" />
+                            </div>
+                        </div>
+                    }
+                    else if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Maker))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Add Comment:</b> <input type="text" name="Comment" id="cmnt" multiple="true" value="@Vobj.MakerComment" class="form-control" />
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b>Hold Comment:</b> <input type="text" name="CommentHold" id="cmnthold" multiple="true" value="@Vobj.MakerComment_Hold" class="form-control" />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b> Checker Comment: </b>
+                                <label>@Vobj.CheckerComment</label>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <b> Maker Comment: </b>
+                                <label>@Vobj.MakerComment</label>
+                            </div>
+                        </div>
+                    }
+                    <br />
+                    <div class="row">
+                        <div class="col-md-2">
+                            @if (Vobj.SubmitEnable.ToLower() == "n")
+                            {
+                                <input type="button" class="form-control btn-success" value="Submit" style="background-color:lightblue" disabled />
+                            }
+                            else
+                            {
+                                <input type="submit" class="form-control btn-success" value="Submit" name="Submit" onclick="SubmitClicked()" />
+                            }
+                        </div>
+
+                        <div class="col-md-2">
+                            <a class="form-control btn-danger" href="/Home/NewViewTransaction?EjID=@Vobj.EJID&feedbackid=@Vobj.FeedBackId&SubmitEnable=@Vobj.SubmitEnable&back='Back'">Back</a>
+                        </div>
+                        <div class="col-md-8"></div>
+                    </div>
+                    @if (Vobj.IsLocked.ToLower() == "y")
+                    {
+                        <label style="color:red">This transaction is locked by another User.</label>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (Vobj.T24ImageUrls.Count > 0)
+                            {
+                                <label class="label-danger" style="width:300px;text-align:center"> View T24 Screenshot</label>
+                                <img src="~/ImagesScreens/@Vobj.T24ImageUrls[0].ToString()" data-toggle="modal" data-target="#myModal" width="300px;" height="250px;">
+                                <div class="text-block">
+                                    @{
+                                        int i = 1;
+                                        string str = "";
+                                        for (i = 1; i <= Vobj.T24ImageUrls.Count; i++)
+                                        {
+                                            str += i.ToString() + " ";
+                                        }
+                                        <h4>@str</h4>
+                                    }
+
+                                </div>
+                                @Html.Partial("_T24PartialView", Vobj)
+                            }
+                            else
+                            {
+                                <div class="text-block">
+                                    <label class="label-danger" style="        width: 300px;
+        text-align: center;
+"> View T24 Screenshot</label>
+                                    <img src="~/Images/No_Image.jpg" width="300px;" height="250px;" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            @if (Vobj.WeCareImageUrls.Count > 0)
+                            {
+                                <label class="label-danger" style="width:300px;text-align:center"> View WeCare Screenshot</label>
+                                <img src="~/ImagesScreens/@Vobj.WeCareImageUrls[0].ToString()" data-toggle="modal" data-target="#myWeCareModal" width="300px;" height="250px;">
+                                <div class="text-block">
+                                    @{
+                                        int i = 1;
+                                        string str = "";
+                                        for (i = 1; i <= Vobj.WeCareImageUrls.Count; i++)
+                                        {
+                                            str += i.ToString() + " ";
+                                        }
+                                        <h4>@str</h4>
+                                    }
+
+                                </div>
+                                @Html.Partial("_WeCare", Vobj)
+                            }
+                            else
+                            {
+                                <div class="text-block">
+                                    <label class="label-danger" style="width:300px;text-align:center;"> View WC Screenshot</label>
+                                    <img src="~/Images/No_Image.jpg" width="300px;" height="250px;" />
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+        </form>
+    </div>
+</div>
+
+<script>
+    function SubmitClicked() {
+        debugger
+        var useraction = $("#useraction").val()
+        if (useraction == "0") {
+            alert("Please select User Action.")
+            event.preventDefault();
+        }
+        else {
+            if ((useraction.toLowerCase() == "approve" || useraction.toLowerCase() == "reject") && $("#cmnt").val() == "") {
+                alert("Please add some comment in Add Comment Box.")
+                event.preventDefault();
+
+            } else if (useraction.toLowerCase() == "hold" && $("#cmnthold").val() == "") {
+                alert("Please add some comment in  Hold Comment Box.")
+                event.preventDefault();
+            }
+        }
+
+    }
+</script>

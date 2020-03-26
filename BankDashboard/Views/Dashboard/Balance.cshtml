@@ -1,0 +1,152 @@
+﻿@model IEnumerable<BankMuscat.UserDetails>
+@{
+    ViewBag.Title = "ReportsUserWise";
+    //Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>BALANCING</h2>
+</div>
+<div class="jumbotron">
+
+
+
+    <div class="container-fluid">
+        <form action="/Dashboard/Balance" method="post">
+            @Html.AntiForgeryToken()
+            @if (ViewBag.obj == null)
+            {
+                <div class="row">
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>From Date:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" required name="fromdate" id="fdt" class="form-control invoice" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>To Date:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" required name="todate" id="tdt" class="form-control invoice" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>Terminal Id:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" name="terminalId" id="tid" class="form-control" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>GL Account:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" name="GlAccoungt" class="form-control" />
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>From Date:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" required name="fromdate" value="@ViewBag.obj.fromdate" class="form-control invoice" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>To Date:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" required name="todate" value="@ViewBag.obj.todate" class="form-control invoice" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>Terminal Id:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" name="terminalId" value="@ViewBag.obj.terminalId" class="form-control" />
+                    </div>
+                    <div class="col-sm-1" style="text-align:right">
+                        <label>GL Account:</label>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="text" name="GlAccoungt" value="@ViewBag.obj.GlAccoungt" class="form-control" />
+                    </div>
+
+                </div>
+            }
+
+            <br />
+
+            <div class="row">
+                <div class="col-lg-5">
+                </div>
+                <div class="col-lg-3">
+                </div>
+                <div class="col-lg-4 right">
+                    <button type="submit" class="btn btn-success" name="download" value="download" @*style="position: relative;left: 112%;"*@>
+                        <span class="glyphicon glyphicon-download"></span>Download Report
+                    </button>
+                    &nbsp;&nbsp;
+                    @*<button class="btn btn-sm btn-default" type="submit" style="color:white;background-color:#3c8ecb;position: relative;left: 112%;" id="btnSearch">*@
+                    <button class="btn btn-sm btn-default" type="submit" style="color:white;background-color:#3c8ecb;" id="btnSearch">
+                        <b><i class="glyphicon glyphicon-search"></i>Search</b>
+                    </button>
+                    @*<input type="button" class="btn btn-sm" value="Save" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />*@
+
+                </div>
+            </div>
+
+
+
+
+        </form>
+    </div>
+
+</div>
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                    <thead>
+                        <tr>
+                            <th>Terminal ID</th>
+                            <th>Device ID</th>
+                            <th>GL Account Number</th>
+                            <th>Amount From T24</th>
+                            <th>Amount From EJ</th>
+                            <th>Difference</th>
+                            <th>Transaction Caused Difference</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (ViewBag.list != null)
+                        {
+
+                            foreach (var item in ViewBag.list)
+                            {
+                                <tr>
+                                    <td>@item.terminalID</td>
+                                    <td>@item.DeviceID</td>
+                                    <td>@item.GLAccountNo</td>
+                                    <td>@item.AmountFromT24</td>
+                                    <td>@item.AmontFromEJ</td>
+                                    <td>@(Convert.ToInt64(item.AmontFromEJ) - Convert.ToInt64(item.AmountFromT24))</td>
+                                    <td>
+                                        <a href="/Home/ReportsUserWise?startDate=@ViewBag.obj.fromdate&endDate=@ViewBag.obj.todate&terminaldId= @ViewBag.obj.terminalId"><span><i class="glyphicon glyphicon-eye-open"></i></span></a>
+                                    </td>
+                                </tr>
+
+                            }
+
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

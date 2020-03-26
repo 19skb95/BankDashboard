@@ -1,0 +1,347 @@
+﻿
+@model IEnumerable<BankMuscat.UserDetails>
+
+@{
+    ViewBag.Title = "ReportsUserWise";
+    //Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@*<h2>Reports</h2>*@
+<body>
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+    <script src="~/Js/ReportsUserWise.js"></script>
+    <div class="well-sm" style="background-color: #f7714df2;color: white;height:80%">
+        <h2>Reports</h2>
+    </div>
+    <div class="jumbotron">
+        <div class="container-fluid">
+
+            @using (Html.BeginForm("ReportsUserWise", "Home", FormMethod.Get, new { id = "SearchUserType" }))
+            {
+                string tid = "", startdt = "", enddt = "",status="",rept="";
+                if (TempData["Tid"] != null)
+                {
+                    tid = (string)TempData["Tid"];
+                }
+                  if (TempData["status"] != null)
+                {
+                    status = (string)TempData["status"];
+                }
+                    if (TempData["RptType"] != null)
+                {
+                    rept = (string)TempData["RptType"];
+                }
+                if (TempData["sDate"] != null && TempData["eDate"] != null)
+                {
+                    startdt = DateTime.Parse(TempData["sDate"].ToString()).ToString("dd-MMM-yyyy");
+                    enddt = DateTime.Parse(TempData["eDate"].ToString()).ToString("dd-MMM-yyyy");
+                    //   startdt=TempData["sDate"].ToString();
+                    // enddt =TempData["eDate"].ToString();
+                }
+                TempData.Keep("Tid");
+                TempData.Keep("sDate");
+                TempData.Keep("eDate");
+                 TempData.Keep("RptType");
+                 TempData.Keep("status");
+                <fieldset>
+                    <legend style="color:black;font-size:15px;"><b>Filters:</b></legend>
+                    <div class="row">
+                        <div class="col-md-3">
+                          
+                            <div class="input-group">
+                                <b>From Date:</b><input type="text" id="startFilterDate" name="startDate" class="form-control invoice" autocomplete="off" value="@startdt" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <b>To Date:</b><input type="text" id="endFilterDate" name="endDate" class="form-control invoice" autocomplete="off" value="@enddt" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+
+                            <b>Terminal Id</b><input type="text" id="txtTerminalId" name="terminaldId" class="form-control" value="@tid" />
+                        </div>
+                        <div class="col-md-3">
+                            <span><b>Status</b></span>
+                            @Html.DropDownList("checkStatus", new List<SelectListItem> {
+                            new SelectListItem{ Text="Select", Value = "1" },
+                            new SelectListItem{ Text="Completed", Value = "2" },
+                            new SelectListItem{ Text="Open", Value = "3" },
+                            new SelectListItem{ Text="Initiated", Value = "4" }}, new { @id = "ddlStatusList", @class = "form-control", @style = "font-size:13px;" })
+                            <input type="hidden" id="status" name="status" value="" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-5">
+                            <span><b>Select Report Type</b></span>
+                            @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserType == "Admin")
+                            {
+
+                                @Html.DropDownList("userReportType", new List<SelectListItem> {
+                            
+                                 new SelectListItem{ Text="Select", Value = "1", Selected=true, Disabled=true },
+                            new SelectListItem{ Text="Select", Value = "1" },
+                            new SelectListItem{ Text="All Pending Transactions", Value = "2" },
+                            new SelectListItem{ Text="All Approval Transactions", Value = "3" },
+                            new SelectListItem{ Text="All Erroneous Transactions", Value = "4" },
+                       new SelectListItem{ Text="All Maker Transactions", Value = "5" },
+                       new SelectListItem{ Text="All Checker Transactions", Value = "6" },
+                       new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "7" },
+                       new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "8" },
+                           new SelectListItem{ Text="User Wise Transactions", Value = "9" }}, new { @class = "form-control", @style = "font-size:13px;" })
+                            }
+                            else
+                            {
+                                @Html.DropDownList("userReportType", new List<SelectListItem> {
+                                new SelectListItem{ Text="Select", Value = "1" },
+                                new SelectListItem{ Text="My Pending Transactions", Value = "2" },
+                                new SelectListItem{ Text="My Approval Transactions", Value = "3" },
+                                new SelectListItem{ Text="My All Transactions", Value = "4" },
+                           new SelectListItem{ Text="All Erroneous Transactions", Value = "5" },
+                           new SelectListItem{ Text="Maximum Dispute Raising Machine", Value = "6" },
+                           new SelectListItem{ Text="Maximum Complaint Raising Customer", Value = "7" }}, new { @class = "form-control", @style = "font-size:13px;" })
+                            }
+                            <input type="hidden" id="reportType" name="reportType" value="" />
+                        </div>
+                        <div class="col-md-2">
+                            @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserType == "Admin")
+                            {
+                                <div id="ddlUserList1" style="display:none">
+                                    <span><b>Select User</b></span>
+                                    @*@Html.DropDownList("ddlUserList", new SelectList(ViewBag.UserList, "UserId", "UserName"),"Select",new { @id = "ddlUserList", @class = "form-control" })*@
+                                    @*@Html.DropDownList("UserList",null, "Select", new { @id = "ddlUserList", @class = "form-control" })*@
+                                    @Html.DropDownList("ddlUserList", (List<SelectListItem>)ViewBag.UserList, new { @class = "form-control", @style = "font-size:13px;" })
+                                    @Html.Hidden("UserName", null, new { @id = "hdUserName" })
+                                    @Html.Hidden("UserNameDefault", null, new { @id = "hdUserNameDefault", @value = "Select" })
+                                </div>
+                            }
+                            </div>
+                        <div class="col-md-5">
+                            <br />
+                            <button type="submit" class="btn btn-info" name="submit" value="Submit" id="btnSearch">
+                                <span class="glyphicon glyphicon-search"></span> View Report
+                            </button>&nbsp;&nbsp;
+                            <button type="button" class="btn btn-success">
+                                <span class="glyphicon glyphicon-refresh"></span> Reset
+                            </button>&nbsp;&nbsp;
+                            <button type="submit" class="btn btn-success" name="download" value="download">
+                                <span class="glyphicon glyphicon-download"></span>Download Report
+                            </button>
+                        </div>
+                    </div>
+                </fieldset>
+            }
+        </div>
+    </div>
+
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div style="overflow:scroll;width:100%;height:340px">
+                        <table id="example1" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TerminalID)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.ErrorCode)
+                                    </th>
+                                    <th>
+                                        <div style="float:left;width:98px;">
+
+                                            <input placeholder="Amount" type="number" style="width:75px;float:left" id="amnt" />
+                                            <span style="float:left;width:21px;font-size:11px">
+                                                <a onclick="CheckAmount('up')"><i style="font-size:10px" class="glyphicon glyphicon-arrow-up"></i></a>
+                                                <a onclick="CheckAmount('down')"><i style="font-size:10px" class="glyphicon glyphicon-arrow-down"></i></a>
+                                            </span>
+                                        </div>
+
+
+                                    </th>
+                                    @*<th>
+                                            @Html.DisplayNameFor(model => model.Amount)
+                                        </th>*@
+                                    @*<th>
+                                            @Html.DisplayNameFor(model => model.AccountNo)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.CardNo)
+                                        </th>*@
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.TransactionTime)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BotProcessStartTime)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BotProcessEndTime)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BotStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.BotRemarks)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.UserAction)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.UserRecommendation)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.RepeatedClaimNo)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.MakerStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CheckerStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.CaseStatus)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.SolvedBy)
+                                    </th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model!=null)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TerminalID)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.ErrorCode)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Amount)
+                                        </td>
+                                        @*<td>
+                                                @Html.DisplayFor(modelItem => item.AccountNo)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.CardNo)
+                                            </td>*@
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TransactionTime)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BotProcessStartTime)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BotProcessEndTime)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BotStatus)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.BotRemarks)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.UserAction)
+                                        </td>
+                                        @if (!string.IsNullOrEmpty(item.UserRecommendation) && item.UserRecommendation.Contains("Recommended By BOT"))
+                                        {
+                                            <td style="background-color:green">
+                                                @Html.DisplayFor(modelItem => item.UserRecommendation)
+                                            </td>
+                                        }
+                                        else if (!string.IsNullOrEmpty(item.UserRecommendation) && item.UserRecommendation.Contains("Recon Officer"))
+                                        {
+
+                                            <td style="background-color:yellow">
+                                                @Html.DisplayFor(modelItem => item.UserRecommendation)
+                                            </td>
+
+                                        }
+                                        else
+                                        {
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.UserRecommendation)
+                                            </td>
+                                        }
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.RepeatedClaimNo)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.MakerStatus)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CheckerStatus)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.CaseStatus)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.SolvedBy)
+                                        </td>
+                                        <td>
+                                            <a href="/Home/ViewTransaction?ID=@item.ID&SolvedBy=@item.SolvedBy"><span style="border:medium;"><i class="glyphicon glyphicon-eye-open"></i></span></a>
+                                           
+                                        </td>
+                                    </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        function CheckAmount(typeval) {
+            debugger;
+            var oTable = document.getElementById('example1');
+            var rowLength = oTable.rows.length;
+            var cellVal;
+
+            var amnt = $("#amnt").val();
+            if (amnt == "") {
+                for (i = 0; i < rowLength; i++) {
+                    // alert( oTable.rows.item(i).cells);
+                    oTable.rows[i].style.display = "";
+                }
+            } else {
+                for (i = 1; i < rowLength; i++) {
+
+                    //gets cells of current row
+                    var oCells = oTable.rows.item(i).cells;
+                    cellVal = (oCells.item(2).innerHTML).trim();
+                    if (cellVal != '') {
+                        if (typeval == 'up') {
+                            if (parseInt(amnt) > parseInt(cellVal))
+                                oTable.rows[i].style.display = "none";//Removes the row.
+                            else
+                                oTable.rows[i].style.display = "";//Keeps the row.
+                        }
+                        else {
+                            if (parseInt(amnt) < parseInt(cellVal))
+                                oTable.rows[i].style.display = "none";
+                            else
+                                oTable.rows[i].style.display = "";
+                        }
+
+                    }
+
+                }
+            }
+
+        }
+
+
+
+
+    </script>
+</body>

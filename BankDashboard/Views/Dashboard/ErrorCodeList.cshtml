@@ -1,0 +1,368 @@
+﻿@using BankDashboard.Models;
+@{
+    ViewBag.Title = "ErrorCodeList";
+    //Layout = "~/Views/Shared/_Layout1.cshtml";
+    var user = ((tbl_UserDetail)Session["User"]);
+}
+
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>ERROR CODE LIST</h2>
+</div>
+@if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+{
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <form action="/Dashboard/ErrorCode" method="post" class="form-group">
+                @Html.AntiForgeryToken()
+                @if (ViewBag.obj == null)
+                {
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Make:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" required name="Make">
+                                <option value="">Select</option>
+                                <option value="NCR">NCR</option>
+                                <option value="WINCOR">WINCOR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align: right">
+                            <label>
+                                Machine Type:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" required name="Machine_Type">
+                                <option value="">Select</option>
+                                <option value="CDM">CDM</option>
+                                <option value="ATM">ATM</option>
+                                <option value="FFM">FFM</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Error Code:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required maxlength="255" name="Error_Code" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Error Description:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <textarea class="form-control" maxlength="255" required name="Error_Description"></textarea>
+                        </div>
+                        @*<div class="col-sm-2" style="text-align:right">
+                                <label>
+                                    Is Active:
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                <input type="checkbox" id="IsActive" name="IsActive" value="TRUE" />
+                            </div>*@
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @if (TempData["Success"] != null)
+                            {
+                                <span style="color:green">@TempData["Success"]</span>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <span style="color:red">@TempData["Error"]</span>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-10 right">
+                            <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Save?')" value="Save" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                        </div>
+                    </div>
+                }
+                else
+                { <input type="hidden" name="ApproveStat" value="@ViewBag.obj.ApproveStat" />
+                    <input type="hidden" name="hid" value="@ViewBag.hid" />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Make:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" required name="Make">
+                                <option value="">Select</option>
+                                <option value="@ViewBag.obj.Make" selected hidden>@ViewBag.obj.Make</option>
+                                <option value="NCR">NCR</option>
+                                <option value="WINCOR">WINCOR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Machine Type:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" required name="Machine_Type">
+                                <option value="">Select</option>
+                                <option value="@ViewBag.obj.Machine_Type" selected hidden>@ViewBag.obj.Machine_Type</option>
+                                <option value="CDM">CDM</option>
+                                <option value="ATM">ATM</option>
+                                <option value="FFM">FFM</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Error Code:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required name="Error_Code" maxlength="255" value="@ViewBag.obj.Error_Code" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Error Description:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <textarea class="form-control" required maxlength="255" name="Error_Description">@ViewBag.obj.Error_Description</textarea>
+                        </div>
+                        @*<div class="col-sm-2" style="text-align:right">
+                                <label>
+                                    Is Active:
+                                </label>
+                            </div>
+                            <div class="col-sm-4">
+                                @if (ViewBag.obj.IsActive == true)
+                                {
+                                    <input type="checkbox" id="IsActive" name="IsActive" checked value="TRUE" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="IsActive" name="IsActive" value="TRUE" />
+                                }
+                            </div>*@
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (ViewBag.obj.ApproveStat != null && (ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.SaveStatus || ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.ModifyStatus))
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Approve" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Edit" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+
+                    </div>
+                    <br />
+
+                }
+
+
+            </form>
+        </div>
+
+    </div>
+}
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+                {
+                    <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                        <thead>
+                            <tr>
+
+                                <th>Make</th>
+                                <th>Machine Type</th>
+                                <th>Error Code</th>
+                                <th>Entry Description</th>
+                                <th>Is Active</th>
+                                <th>Entry By</th>
+                                <th>Entry Time</th>
+                                <th>Updated By</th>
+                                <th>Update Time</th>
+                                <th>Check & Approve</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (ViewBag.list != null)
+                            {
+
+                                foreach (var item in ViewBag.list)
+                                {
+                                    <tr>
+
+                                        <td>@item.Make</td>
+                                        <td>@item.Machine_Type</td>
+                                        <td>@item.Error_Code</td>
+                                        <td>@item.Error_Description</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                            }
+                                        </td>
+                                        <td>@item.EntryBy</td>
+                                        <td>@item.EntryTime.ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                        <td>@item.UpdateBy</td>
+                                        @if (item.UpdateTime != null)
+                                        {
+                                            <td>
+                                                @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+                                        <td>
+
+                                            @if (!user.AccountName.Equals(item.EntryBy) && !user.AccountName.Equals(item.UpdateBy))
+                                            {
+                                                if (item.ApproveStat == BankDashboard.Common.Constants.SaveStatus || item.ApproveStat == BankDashboard.Common.Constants.ModifyStatus)
+                                                {
+                                                    <a href="/Dashboard/ErrorCodeList?id=@item.ID"><span style="color:green"><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a href="/Dashboard/ErrorCodeList?id=@item.ID&ed=2"><span><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                        </td>
+                                    </tr>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No data in the table.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                        <thead>
+                            <tr>
+
+                                <th>Make</th>
+                                <th>Machine Type</th>
+                                <th>Error Code</th>
+                                <th>Entry Description</th>
+                                <th>Is Active</th>
+                                <th>Entry By</th>
+                                <th>Entry Time</th>
+                                <th>Updated By</th>
+                                <th>Update Time</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (ViewBag.list != null)
+                            {
+
+                                foreach (var item in ViewBag.list)
+                                {
+                                    <tr>
+
+                                        <td>@item.Make</td>
+                                        <td>@item.Machine_Type</td>
+                                        <td>@item.Error_Code</td>
+                                        <td>@item.Error_Description</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                            }
+                                        </td>
+                                        <td>@item.EntryBy</td>
+                                        <td>@item.EntryTime.ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                        <td>@item.UpdateBy</td>
+                                        @if (item.UpdateTime != null)
+                                        {
+                                            <td>
+                                                @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+
+                                    </tr>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No data in the table.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function clicked(msg) {
+        debugger
+        if (confirm(msg)) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>

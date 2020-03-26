@@ -1,0 +1,678 @@
+﻿@model IEnumerable<BankMuscat.UserDetails>
+@{
+    ViewBag.Title = "ReportsUserWise";
+    //Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+@*<h2>Reports</h2>*@
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+<style>
+    html, body {
+        /*margin: 0;
+        padding: 0;
+        height: 100%;*/
+    }
+
+    .sec1 {
+        position: relative;
+        border: 1px #000;
+        padding-top: 37px;
+        background: #ddd;
+        width: 2659px;
+    }
+
+        .sec1.positioned {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 100%;
+            box-shadow: 0 0 15px #333;
+        }
+
+        .sec1 .container {
+            overflow-y: auto;
+            height: 380px;
+            width: 100%;
+            padding-left: 0px;
+        }
+
+    #example1 {
+        border-spacing: 0;
+        width: 100%;
+    }
+
+        #example1 td + td {
+            border-left: 1px solid #eee;
+        }
+
+        #example1 td, th {
+            border-bottom: 1px solid #eee;
+            background: #ddd;
+            color: #000;
+            padding: 10px 25px;
+        }
+
+        #example1 th {
+            height: 0;
+            line-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            color: transparent;
+            border: none;
+            white-space: nowrap;
+        }
+
+            #example1 th div {
+                position: absolute;
+                background: transparent;
+                color: black;
+                padding: 9px 25px;
+                top: 0;
+                margin-left: -25px;
+                line-height: normal;
+                border-left: 1px solid #800;
+            }
+
+            #example1 th:first-child div {
+                border: none;
+            }
+</style>
+@*<script src="~/Js/ReportsUserWise.js"></script>*@
+<div class="well-sm" style="background-color: #EE3E42;color: white;height:80%">
+    <h2>REPORTS</h2>
+</div>
+<div class="jumbotron">
+    <div class="container-fluid">
+
+
+        <form action="/Home/NewReportUserWise" method="post">
+            @{
+
+                var searchdetail = new BankDashboard.Common.ViewModelClass.ViewReportSeachDataModel();
+                if (ViewBag.SearchDetail != null)
+                {
+                    searchdetail = (BankDashboard.Common.ViewModelClass.ViewReportSeachDataModel)ViewBag.SearchDetail;
+                    TempData["SearchDetail"] = ViewBag.SearchDetail;
+                }
+
+
+            }
+
+            @*<legend style="color:black;font-size:15px;"><b>Filters:</b></legend>*@
+            <div class="row">
+                <div class="col-sm-2" style="text-align:right">
+                    <label>From Date:</label>
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" id="startFilterDate" name="startDate" class="form-control invoice" autocomplete="off" value="@searchdetail.startDate" />
+                </div>
+
+                <div class="col-sm-1" style="text-align:right">
+                    <label>To Date:</label>
+                </div>
+                <div class="col-sm-2">
+                    <input type="text" id="endFilterDate" name="endDate" class="form-control invoice" autocomplete="off" value="@searchdetail.endDate" />
+                </div>
+                <div class="col-sm-1" style="text-align:right">
+                    <label>Terminal Id:</label>
+                </div>
+                <div class="col-sm-1">
+                    <input type="text" id="txtTerminalId" name="terminaldId" class="form-control" value="@searchdetail.terminaldId" style="width:110px;" />
+                </div>
+                <div class="col-sm-1" style="text-align:right">
+                    <label>Status</label>
+                </div>
+                <div class="col-sm-2">
+                    <select id="ddlStatusList" name="checkStatus" class="form-control" style="font-size:13px;">
+                        @if (!string.IsNullOrEmpty(searchdetail.status))
+                        {
+                            <option value="@searchdetail.status" selected hidden>@searchdetail.status</option>
+                            <option value="1">Select </option>
+                        }
+                        else
+                        {
+                            <option value="1">Select </option>
+                        }
+                        <option value="Completed">Completed</option>
+                        <option value="Open">Open</option>
+                        <option value="Initiated">Initiated</option>
+                    </select>
+                    <input type="hidden" id="status" name="status" value="" />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-2" style="text-align:right">
+                    <label>Select Report Type</label>
+                </div>
+                <div class="col-md-3">
+                    @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+                    {
+                        <select style="font-size:13px;" class="form-control" name="userReportType" id="userReportType">
+                            @if (!string.IsNullOrEmpty(searchdetail.reportType))
+                            {
+                                <option value="@searchdetail.reportType" selected hidden>@searchdetail.reportType</option>
+                                <option id="sel" value="">Select </option>
+                            }
+                            else
+                            {
+                                <option value="">Select </option>
+                            }
+                            <option value="All Pending Transactions">All Pending Transactions</option>
+                            <option value="All Approval Transactions">All Approval Transactions</option>
+                            <option value="All Erroneous Transactions">All Erroneous Transactions</option>
+                            <option value="All Maker Transactions">All Maker Transactions</option>
+                            <option value="All Checker Transactions">All Checker Transactions</option>
+                            <option value="Maximum Dispute Raising Machine">Maximum Dispute Raising Machine</option>
+                            <option value="Maximum Complaint Raising Customer">Maximum Complaint Raising Customer</option>
+                            <option value="User Wise Transactions">User Wise Transactions</option>
+                        </select>
+                    }
+                    else
+                    {
+                        <select style="font-size:13px;" class="form-control" name="userReportType" id="userReportType">
+                            @if (!string.IsNullOrEmpty(searchdetail.reportType))
+                            {
+                                <option value="@searchdetail.reportType" selected hidden>@searchdetail.reportType</option>
+                                <option id="sel" value="">Select</option>
+                            }
+                            else
+                            {
+                                <option value="">Select </option>
+                            }
+                            <option value="All Pending Transactions">All Pending Transactions</option>
+                            <option value="All Approval Transactions">All Approval Transactions</option>
+                            <option value="All Erroneous Transactions">All Erroneous Transactions</option>
+                            <option value="All Maker Transactions">All Maker Transactions</option>
+                            <option value="All Checker Transactions">All Checker Transactions</option>
+                            <option value="Maximum Dispute Raising Machine">Maximum Dispute Raising Machine</option>
+                            <option value="Maximum Complaint Raising Customer">Maximum Complaint Raising Customer</option>
+
+                        </select>
+
+                    }
+                    <input type="hidden" id="reportType" name="reportType" value="" />
+                </div>
+                <div class="col-md-2">
+                    @if (((BankDashboard.Models.tbl_UserDetail)Session["User"]).UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+                    {
+                        if (searchdetail.reportType == "User Wise Transactions")
+                        {
+                            @*<span><b>Select User</b></span>*@
+                            <div id="ddlUserList1" style="display:block">
+                                <select style="font-size:13px" class="form-control" name="ddlUserList">
+                                    @if (!string.IsNullOrEmpty(searchdetail.ddlUserList))
+                                    {
+                                        <option value="@searchdetail.ddlUserList.Split(',')[0]" selected hidden>@searchdetail.ddlUserList.Split(',')[1]</option>
+                                        <option id="sel" value="0">Select User</option>
+                                    }
+                                    else
+                                    {
+                                        <option id="sel" value="0">Select User</option>
+                                    }
+
+                                    @if (ViewBag.UserList != null)
+                                    {
+                                        foreach (var item in ((List<BankDashboard.Models.tbl_UserDetail>)ViewBag.UserList))
+                                        {
+                                            <option value="@item.AccountName">@item.AccountName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+                        else
+                        {
+
+                            <div id="ddlUserList1" style="display:none">
+                                @*<span><b>Select User</b></span>*@
+                                <select style="font-size:13px" class="form-control" name="ddlUserList">
+                                    <option id="sel" value="0">Select User</option>
+                                    @if (ViewBag.UserList != null)
+                                    {
+                                        foreach (var item in ((List<BankDashboard.Models.tbl_UserDetail>)ViewBag.UserList))
+                                        {
+                                            <option value="@item.AccountName">@item.AccountName</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        }
+
+
+
+                    }
+                </div>
+                <div class="col-md-5">
+                    <br />
+                    <button type="submit" class="btn btn-info" name="submit" value="Submit" id="btnSearch">
+                        <span class="glyphicon glyphicon-search"></span> View Report
+                    </button>&nbsp;&nbsp;
+                    <a class="btn btn-success" href="/Home/NewReportUserWise">
+                        <span class="glyphicon glyphicon-refresh"></span> Reset
+                    </a>&nbsp;&nbsp;
+                    <button type="submit" class="btn btn-success" name="download" value="download">
+                        <span class="glyphicon glyphicon-download"></span>Download Report
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div style="overflow:scroll;width:100%;">
+                    @if (ViewBag.MaxDisputeMachine != null)
+                    {
+                        <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        TerminalID
+                                    </th>
+                                    <th>
+                                        DeviceId
+                                    </th>
+                                    <th>
+                                        Make
+                                    </th>
+                                    <th>
+                                        TerminalType
+                                    </th>
+                                    <th>
+
+                                        Count
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                @foreach (var item in (List<BankMuscat.MaxDisputedMachine>)ViewBag.MaxDisputeMachine)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TerminalID)
+
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.DeviceId)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Make)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.TerminalType)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Count)
+                                        </td>
+
+                                    </tr>
+                                }
+
+
+
+                            </tbody>
+                        </table>
+                    }
+                    else if (ViewBag.MaxDisputeCustomer != null)
+                    {
+                        var x = (BankMuscat.MaxComplaintCustomer)ViewBag.MaxDisputeCustomer;
+
+
+                        <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        CustomerName
+                                    </th>
+                                    <th>
+                                        Mobile
+                                    </th>
+                                    <th>
+                                        Email
+                                    </th>
+                                    <th>
+                                        AccountNo
+                                    </th>
+                                    <th>
+                                        CardNo
+                                    </th>
+                                    <th>
+                                        Count
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (!string.IsNullOrEmpty(x.Count))
+                                {
+                                    <tr>
+                                        <td>
+                                            @x.CustomerName
+
+                                        </td>
+                                        <td>
+                                            @x.Mobile
+                                        </td>
+                                        <td>
+                                            @x.Email
+                                        </td>
+                                        <td>
+                                            @x.AccountNo
+                                        </td>
+                                        <td>
+                                            @x.CardNo
+                                        </td>
+                                        <td>
+                                            @x.Count
+                                        </td>
+
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr><td colspan="6">No Data Found!</td></tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            <div style="position:relative;left:23%">
+
+                                <input type="number" class="form-control" style="width:90px;float:left" id="amnt" />
+                                <span style="float:left;width:21px;font-size:11px">
+                                    <a onclick="CheckAmount('up',2)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-up"></i></a>
+                                    <a onclick="CheckAmount('down',2)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-down"></i></a>
+                                </span>
+                            </div>
+                            <div style="position:relative;left:26%">
+
+                                <input type="number" class="form-control" style="width:90px;float:left" id="amnt2" />
+                                <span style="float:left;width:21px;font-size:11px">
+                                    <a onclick="CheckAmount('up',3)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-up"></i></a>
+                                    <a onclick="CheckAmount('down',3)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-down"></i></a>
+                                </span>
+                            </div>
+                            <div style="position:relative;left:31%">
+
+                                <input placeholder="" class="form-control" style="width:90px;float:left" type="number" id="amnt3" />
+                                <span style="float:left;width:21px;font-size:11px">
+                                    <a onclick="CheckAmount('up',4)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-up"></i></a>
+                                    <a onclick="CheckAmount('down',4)"><i style="font-size:10px" class="glyphicon glyphicon-arrow-down"></i></a>
+                                </span>
+                            </div>
+                        </div>
+                        <section class="sec1">
+                            <div class="container">
+                                <table id="example1" style="text-align:center">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                TerminalID
+                                                <div>TerminalID</div>
+                                            </th>
+                                            <th>
+                                                ErrorCode
+                                                <div>ErrorCode</div>
+                                            </th>
+                                            <th>
+                                                Amount
+                                                <div>Amount</div>
+
+
+                                            </th>
+                                            <th>
+                                                Counterfeit Amount
+                                                <div>Counterfeit Amount</div>
+                                            </th>
+                                            <th>
+                                                Cash Retracted Amount
+                                                <div>Cash Retracted Amount</div>
+
+                                            </th>
+                                            <th>
+                                                TransactionTime
+                                                <div>TransactionTime</div>
+                                            </th>
+                                            <th>
+                                                BotProcessStartTime
+                                                <div>BotProcessStartTime</div>
+                                            </th>
+                                            <th>
+                                                BotProcessEndTime
+                                                <div>BotProcessEndTime</div>
+                                            </th>
+                                            <th>
+                                                BotStatus
+                                                <div>BotStatus</div>
+                                            </th>
+                                            <th>
+                                                BotRemarks
+                                                <div>BotRemarks</div>
+                                            </th>
+                                            <th>
+                                                UserAction
+                                                <div>UserAction</div>
+                                            </th>
+                                            <th>
+                                                UserRecommendation
+                                                <div>UserRecommendation</div>
+                                            </th>
+                                            <th>
+                                                RepeatedClaimNo
+                                                <div>RepeatedClaimNo</div>
+                                            </th>
+                                            <th>
+                                                MakerStatus
+                                                <div>MakerStatus</div>
+                                            </th>
+                                            <th>
+                                                CheckerStatus
+                                                <div>CheckerStatus</div>
+                                            </th>
+                                            <th>
+                                                CaseStatus
+                                                <div>CaseStatus</div>
+                                            </th>
+                                            <th>
+                                                SolvedBy
+                                                <div>SolvedBy</div>
+                                            </th>
+                                            <th>
+                                                View
+                                                <div>View</div>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (ViewBag.ReportData != null)
+                                        {
+                                            foreach (var item in ViewBag.ReportData)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @item.TerminalID
+                                                    </td>
+                                                    <td>
+                                                        @item.ErrorCode
+                                                    </td>
+                                                    <td>
+                                                        @item.Amount
+                                                    </td>
+                                                    <td>
+                                                        @item.Counterfeit_Amount
+                                                    </td>
+                                                    <td>
+                                                        @item.Cash_Retracted_Amount
+                                                    </td>
+
+                                                    <td>
+                                                        @item.TransactionTime
+                                                    </td>
+                                                    <td>
+                                                        @item.BotProcessStartTime
+                                                    </td>
+                                                    <td>
+                                                        @item.BotProcessEndTime
+                                                    </td>
+                                                    <td>
+                                                        @item.BotStatus
+                                                    </td>
+                                                    <td>
+                                                        @item.BotRemarks
+                                                    </td>
+                                                    <td>
+                                                        @item.UserAction
+                                                    </td>
+                                                    @if (!string.IsNullOrEmpty(item.UserRecommendation) && item.UserRecommendation.Contains("Recommended By BOT"))
+                                                    {
+                                                        <td style="background-color:green">
+                                                            @item.UserRecommendation
+                                                        </td>
+                                                    }
+                                                    else if (!string.IsNullOrEmpty(item.UserRecommendation) && item.UserRecommendation.Contains("Recon Officer"))
+                                                    {
+
+                                                        <td style="background-color:yellow">
+                                                            @item.UserRecommendation
+                                                        </td>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>
+                                                            @item.UserRecommendation
+                                                        </td>
+                                                    }
+                                                    <td>
+                                                        @item.RepeatedClaimNo
+                                                    </td>
+                                                    <td>
+                                                        @item.MakerStatus
+                                                    </td>
+                                                    <td>
+                                                        @item.CheckerStatus
+                                                    </td>
+                                                    <td>
+                                                        @item.CaseStatus
+                                                    </td>
+                                                    <td>
+                                                        @item.SolvedBy
+                                                    </td>
+                                                    <td>
+                                                        <a href="/Home/NewViewTransaction?ID=@item.ID&SolvedBy=@item.SolvedBy"><span style="border:medium;"><i class="glyphicon glyphicon-eye-open"></i></span></a>
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $('#ddlStatusList').change(function () {
+        debugger
+        var stsText = $('#ddlStatusList option:selected').text();
+
+        $('#status').val(stsText);
+
+    });
+
+
+    $('#userReportType').change(function () {
+        debugger
+        var stsTextType = $('#userReportType option:selected').text();
+
+        if (stsTextType == 'User Wise Transactions') {
+            $('#sel').prop('selected', 'selected');
+            $('#ddlUserList1').css('display', 'block');
+        }
+        else {
+            $('#ddlUserList1').css('display', 'none');
+        }
+
+        $('#reportType').val(stsTextType);
+        if (stsTextType == 'Maximum Complaint Raising Customer' || stsTextType == 'Maximum Dispute Raising Machine') {
+            $("#txtTerminalId").attr("disabled", "disabled");
+            $("#ddlStatusList").attr("disabled", "disabled");
+        }
+        else {
+            $("#txtTerminalId").removeAttr("disabled");
+            $("#ddlStatusList").removeAttr("disabled");
+        }
+    });
+
+
+
+    function CheckAmount(typeval, col) {
+
+        var oTable = document.getElementById('example1');
+        var rowLength = oTable.rows.length;
+        var cellVal;
+        var amnt = "";
+        if (col == 2) {
+            amnt = $("#amnt").val();
+        }
+        else if (col == 3) {
+            amnt = $("#amnt2").val();
+        }
+        else {
+            amnt = $("#amnt3").val();
+        }
+
+        if (amnt == "") {
+            for (i = 0; i < rowLength; i++) {
+                // alert( oTable.rows.item(i).cells);
+                oTable.rows[i].style.display = "";
+            }
+        } else {
+            for (i = 1; i < rowLength; i++) {
+
+                //gets cells of current row
+                var oCells = oTable.rows.item(i).cells;
+                cellVal = (oCells.item(col).innerHTML).trim();
+                if (cellVal != '') {
+                    if (typeval == 'up') {
+                        if (parseInt(amnt) > parseInt(cellVal))
+                            oTable.rows[i].style.display = "none";//Removes the row.
+                        else
+                            oTable.rows[i].style.display = "";//Keeps the row.
+                    }
+                    else {
+                        if (parseInt(amnt) < parseInt(cellVal))
+                            oTable.rows[i].style.display = "none";
+                        else
+                            oTable.rows[i].style.display = "";
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+
+
+
+</script>

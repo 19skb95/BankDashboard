@@ -1,0 +1,400 @@
+﻿@using BankDashboard.Common
+@{
+    var user = ((BankDashboard.Models.tbl_UserDetail)Session["User"]);
+    ViewBag.Title = "Profile";
+    //  Layout = "~/Views/Shared/_Layout1.cshtml";
+}
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>PROFILE PAGE</h2>
+</div>
+
+
+@if (ViewBag.obj != null)
+{
+    <div class="jumbotron">
+        @{
+            var obj = (BankDashboard.Models.tbl_GroupRoleMappingMaster)ViewBag.obj;
+        }
+        <div class="container-fluid">
+
+            <form action="/Dashboard/ProfilePage" method="post">
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="hid" value="@ViewBag.hid" />
+                <input type="hidden" name="ApproveStat" value="@obj.ApproveStat" />
+
+                <div class="row">
+
+                    <div class="col-sm-4" style="text-align:left">
+                        <label>Group Name:</label>
+
+                        <input type="text" value="@obj.GroupName" name="GroupName" class="form-control" readonly />
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label><br /></label>
+                        <div class="dropdown dropright">
+                            <ul style="list-style-type:none;">
+
+                                <li class="dropdown" id="profilelist">
+
+                                    <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-default dropdown-toggle">Select Pages <b class="caret"></b></a>
+
+                                    <ul class="dropdown-menu">
+
+                                        <li>
+
+                                            <div class="checkbox">
+
+                                                <label>
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.Contains("Balance"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="Balance"> <b>Balance</b>
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="Balance"> <b>Balance</b>
+                                                    }
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+
+                                        <li>
+
+                                            <div class="checkbox">
+
+                                                <label>
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("BinList"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="BinList"><b>BinList</b>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="BinList"> <b>BinList</b>
+                                                    }
+                                                </label>
+
+
+                                            </div>
+
+
+                                        </li>
+
+
+                                        <li>
+
+
+                                            <div class="checkbox">
+
+                                                <label>
+
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("BotMaster"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="BotMaster"><b>BotMaster</b>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="BotMaster"> <b>BotMaster</b>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+                                        <li>
+
+
+                                            <div class="checkbox">
+
+                                                <label>
+
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("DeviceList"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="DeviceList"><b>Device List</b>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="DeviceList"> <b>Device List</b>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+
+                                        <li>
+
+                                            <div class="checkbox">
+
+                                                <label>
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("ErrorCodeList"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="ErrorCodeList"><b>ErrorCodeList</b>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="ErrorCodeList"> <b>ErrorCodeList</b>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+
+
+                                        <li>
+
+                                            <div class="checkbox">
+
+                                                <label>
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("GLAList"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="GLAList"><b>GLAList</b>
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="GLAList"> <b>GLAList</b>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+                                        <li>
+
+                                            <div class="checkbox">
+
+                                                <label>
+                                                    @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("Report"))
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="Report"><b>Report</b>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="Report"> <b>Report</b>
+                                                    }
+
+                                                </label>
+
+                                            </div>
+
+                                        </li>
+                                        @*<li>
+
+                                                <div class="checkbox">
+
+                                                    <label>
+                                                        @if (!string.IsNullOrEmpty(obj.PageName) && obj.PageName.ToString().Contains("Profile"))
+                                                        {
+                                                            <input type="checkbox" onchange="AssignPage(this)" checked class="form-check-input" value="Profile"><b>Profile</b>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="checkbox" onchange="AssignPage(this)" class="form-check-input" value="Profile"> <b>Profile</b>
+                                                        }
+
+                                                    </label>
+
+                                                </div>
+
+                                            </li>*@
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <input type="hidden" value="@obj.PageName" name="PageName" id="hiddenPages" />
+
+                <div class="row">
+
+
+                </div>
+
+
+
+
+                <div class="row">
+                    @if (ViewBag.obj.ApproveStat != null && ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.ModifyStatus)
+                    {
+                        <div class="col-lg-10 right">
+                            <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Approve" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-lg-10 right">
+                            <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Edit" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                        </div>
+                    }
+
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+}
+
+
+
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                    <thead id="thd">
+                        <tr>
+                            @* ID	GroupName	GroupDescription	EntryTime	EntryBy	UpdateTime	UpdateBy	IsActive	ApproveStat	PageName *@
+
+                            <th>Group Name</th>
+                            <th>PageName</th>
+
+                            <th>Entry Time</th>
+                            <th>Entry By</th>
+                            <th>Update Time</th>
+                            <th>Updated By</th>
+                            <th>IsActive</th>
+                            <th>Check & Approve</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @if (ViewBag.groupList != null)
+                        {
+                            foreach (var item in ViewBag.groupList)
+                            {
+                                <tr>
+
+
+                                    <td>@item.GroupName</td>
+                                    <td>@item.PageName</td>
+
+                                    @if (item.EntryTime != null)
+                                    {
+                                        <td>
+                                            @item.EntryTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>@item.EntryBy</td>
+
+                                    @if (item.UpdateTime != null)
+                                    {
+                                        <td>
+                                            @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>@item.UpdateBy</td>
+
+                                    <td>
+                                        @if (item.IsActive == true)
+                                        {
+                                            <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!user.AccountName.Equals(item.UpdateBy))
+                                        {
+                                            if (item.ApproveStat == BankDashboard.Common.Constants.ModifyStatus)
+                                            {
+                                                <a href="/Dashboard/ProfilePage?id=@item.ID"><span style="color:green"><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                        }
+                                    </td>
+
+
+                                    <td>
+                                        <a href="/Dashboard/ProfilePage?id=@item.ID&ed=2"><span><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                    </td>
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+                            <tr>
+                                <td>No data in the table.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function AssignPage(x) {
+        debugger
+        var selected = new Array();
+        var tbl_GroupRoleMappingMaster = document.getElementById("profilelist");
+        var chks = tbl_GroupRoleMappingMaster.getElementsByTagName("INPUT");
+        for (var i = 0; i < chks.length; i++) {
+            if (chks[i].checked) {
+                selected.push(chks[i].value);
+            }
+        }
+        if (selected.length > 0) {
+            // alert("Pages are: " + selected.join(","));
+            $("#hiddenPages").val(selected.join(" ,"))
+
+
+        }
+    }
+</script>

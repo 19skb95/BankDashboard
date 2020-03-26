@@ -1,0 +1,316 @@
+﻿@using BankDashboard.Models;
+@{
+    ViewBag.Title = "BNMst";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = ((tbl_UserDetail)Session["User"]);
+}
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>BIN LIST</h2>
+</div>
+@if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+{
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <form action="/Dashboard/BNMst" method="post" class="form-group">
+                @Html.AntiForgeryToken()
+                @if (ViewBag.obj == null)
+                {
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Product Name:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required maxlength="200" name="ProductName" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Sub BIN:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" required name="SUBBIN" max="10000000000" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                BIN:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" required name="BIN" max="10000000000" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5">
+
+                            @if (TempData["Success"] != null)
+                            {
+                                <span style="color:green">@TempData["Success"]</span>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <span style="color:red">@TempData["Error"]</span>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-10 right">
+                            <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Save?')" value="Save" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="ApproveStat" value="@ViewBag.obj.ApproveStat" />
+                    <input type="hidden" name="hid" value="@ViewBag.hid" />
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label>
+                                Product Name:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" name="ProductName" maxlength="200" required value="@ViewBag.obj.ProductName" class="form-control" />
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                Sub BIN:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" name="SUBBIN" max="10000000000" required value="@ViewBag.obj.SUBBIN" class="form-control" />
+                        </div>
+                        <div class="col-sm-2">
+                            <label>
+                                BIN:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" name="BIN" max="10000000000" required value="@ViewBag.obj.BIN" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5">
+
+                            @if (TempData["Success"] != null)
+                            {
+                                <span style="color:green">@TempData["Success"]</span>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <span style="color:red">@TempData["Error"]</span>
+                            }
+                        </div>
+
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (ViewBag.obj.ApproveStat != null && (ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.SaveStatus || ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.ModifyStatus))
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Approve" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Edit" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+
+                    </div>
+                }
+
+
+            </form>
+        </div>
+
+    </div>
+}
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                @if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+                {
+                    <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                        <thead>
+                            <tr>
+
+                                <th style="width:122px">Product Name</th>
+                                <th>BIN</th>
+                                <th>SUB BIN</th>
+                                <th>Is Active</th>
+                                <th>Entry By</th>
+                                <th>Entry Time</th>
+                                <th>Updated By</th>
+                                <th>Update Time</th>
+                                <th>Check & Approve</th>
+                                <th>Edit</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (ViewBag.list != null)
+                            {
+
+                                foreach (var item in (List<BankDashboard.Models.tbl_MasterBINList>)ViewBag.list)
+                                {
+                                    <tr>
+
+                                        <td style="text-wrap:inherit">@item.ProductName</td>
+                                        <td>@item.BIN</td>
+                                        <td>@item.SUBBIN</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                            }
+                                        </td>
+                                        <td>@item.EntryBy</td>
+                                        <td>@Convert.ToDateTime(item.EntryTime).ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                        <td>@item.UpdateBy</td>
+                                        @if (item.UpdateTime != null)
+                                        {
+                                            <td>
+                                                @Convert.ToDateTime(item.UpdateTime).ToString("dd/MMM/yyyy hh:mm tt")
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>
+
+                                            @if (!user.AccountName.Equals(item.EntryBy) && !user.AccountName.Equals(item.UpdateBy))
+                                            {
+                                                if (item.ApproveStat == BankDashboard.Common.Constants.SaveStatus || item.ApproveStat == BankDashboard.Common.Constants.ModifyStatus)
+                                                {
+                                                    <a href="/Dashboard/BNMst?id=@item.ID"><span style="color:green"><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            <a href="/Dashboard/BNMst?id=@item.ID&ed=2"><span><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                        </td>
+                                    </tr>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No data in the table.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table id="example" class="table-bordered table table-striped table-condensed " style="text-align:center">
+                        <thead>
+                            <tr>
+
+                                <th style="width:122px">Product Name</th>
+                                <th>BIN</th>
+                                <th>SUB BIN</th>
+                                <th>Is Active</th>
+                                <th>Entry By</th>
+                                <th>Entry Time</th>
+                                <th>Updated By</th>
+                                <th>Update Time</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @if (ViewBag.list != null)
+                            {
+
+                                foreach (var item in (List<BankDashboard.Models.tbl_MasterBINList>)ViewBag.list)
+                                {
+                                    <tr>
+
+                                        <td style="text-wrap:inherit">@item.ProductName</td>
+                                        <td>@item.BIN</td>
+                                        <td>@item.SUBBIN</td>
+                                        <td>
+                                            @if (item.IsActive == true)
+                                            {
+                                                <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                            }
+                                        </td>
+                                        <td>@item.EntryBy</td>
+                                        <td>@Convert.ToDateTime(item.EntryTime).ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                        <td>@item.UpdateBy</td>
+                                        @if (item.UpdateTime != null)
+                                        {
+                                            <td>
+                                                @Convert.ToDateTime(item.UpdateTime).ToString("dd/MMM/yyyy hh:mm tt")
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+
+
+
+                                    </tr>
+
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No data in the table.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function clicked(msg) {
+        debugger
+        if (confirm(msg)) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>

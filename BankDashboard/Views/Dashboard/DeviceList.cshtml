@@ -1,0 +1,478 @@
+﻿@using BankDashboard.Models;
+@{
+    ViewBag.Title = "DeviceList";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = ((tbl_UserDetail)Session["User"]);
+}
+
+
+<div class="well-sm" style="background-color: #EE3E42;color: white;">
+    <h2>DEVICE LIST</h2>
+</div>
+
+
+
+@if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+{
+    <div class="jumbotron">
+        <div class="container-fluid">
+            <form action="/Dashboard/Devicelist" method="post" class="form-group">
+                @Html.AntiForgeryToken()
+                @if (ViewBag.obj == null)
+                {
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Terminal ID:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" max="100000000000000000000" required name="TerminalID" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align: right">
+                            <label>
+                                Terminal Type:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="TerminalType" required>
+                                <option value="">--Select--</option>
+                                <option value="CDM"> CDM</option>
+                                <option value="ATM"> ATM</option>
+                                <option value="FFM"> FFM</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Device ID:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required maxlength="20" name="DeviceId" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required maxlength="255" name="Custodian" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Make:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="Make" required>
+                                <option value="">--Select--</option>
+                                <option value="NCR"> NCR</option>
+                                <option value="WINCOR"> WINCOR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian Alert Mail:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="email" maxlength="255" required name="CustodianAlertEmail" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Serial Number:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" max="100000000000000000000" required name="SerialNumber" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian Alert Mobile:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" max="100000000000000000000" required name="CustodianAlertMobile" maxlength="10" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Model Number:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required name="ModelNumber" class="form-control" maxlength="100" />
+                        </div>
+                    </div>
+                   
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @if (TempData["Success"] != null)
+                            {
+                                <span style="color:green">@TempData["Success"]</span>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <span style="color:red">@TempData["Error"]</span>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-lg-10 right">
+                            <input type="submit" class="btn btn-sm" value="Save" onclick="clicked('Are you sure to Save?')" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="ApproveStat" value="@ViewBag.obj.ApproveStat" />
+                    <input type="hidden" name="hid" value="@ViewBag.hid" />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Terminal ID:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" max="100000000000000000000" required name="TerminalID" value="@ViewBag.obj.TerminalID" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Terminal Type:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="TerminalType" required>
+                                <option value="">--Select--</option>
+                                <option value="@ViewBag.obj.TerminalType" selected hidden>@ViewBag.obj.TerminalType</option>
+                                <option value="CDM"> CDM</option>
+                                <option value="ATM"> ATM</option>
+                                <option value="FFM"> FFM</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Device ID:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" maxlength="20" required name="DeviceId" value="@ViewBag.obj.DeviceId" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required name="Custodian" maxlength="255" value="@ViewBag.obj.Custodian" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Make:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control" name="Make" required>
+                                <option value="">--Select--</option>
+                                <option value="@ViewBag.obj.Make" selected hidden> @ViewBag.obj.Make</option>
+                                <option value="NCR"> NCR</option>
+                                <option value="WINCOR"> WINCOR</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian Alert Mail:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="email" required name="CustodianAlertEmail" maxlength="255" class="form-control" value="@ViewBag.obj.CustodianAlertEmail" />
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Serial Number:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" required name="SerialNumber" max="100000000000000000000" value="@ViewBag.obj.SerialNumber" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Custodian Alert Mobile:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required name="CustodianAlertMobile" value="@ViewBag.obj.CustodianAlertMobile" maxlength="10" class="form-control" />
+                        </div>
+                        <div class="col-sm-2" style="text-align:right">
+                            <label>
+                                Model Number:
+                            </label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="text" required name="ModelNumber" maxlength="100" value="@ViewBag.obj.ModelNumber" class="form-control" />
+                        </div>
+                    </div>
+                    <br />
+                   
+                    <br />
+                    <div class="row">
+                        <div class="col-sm-5">
+                            @if (TempData["Success"] != null)
+                            {
+                                <span style="color:green">@TempData["Success"]</span>
+                            }
+                            @if (TempData["Error"] != null)
+                            {
+                                <span style="color:red">@TempData["Error"]</span>
+                            }
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        @if (ViewBag.obj.ApproveStat != null && (ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.SaveStatus || ViewBag.obj.ApproveStat == BankDashboard.Common.Constants.ModifyStatus))
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Approve" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-10 right">
+                                <input type="submit" class="btn btn-sm" onclick="clicked('Are you sure to Edit?')" value="Edit" style="background-color: #f7714df2;color: white;font-weight: bold;position: relative;left: 103%;" />
+                            </div>
+                        }
+
+                    </div>
+                }
+
+
+            </form>
+        </div>
+    </div>
+}
+
+
+
+
+<div class="jumbotron">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+
+                <div style="overflow:scroll;width:100%">
+                    @if (!user.UserGroup.Equals(BankDashboard.Common.Constants.UserGroups.Admin))
+                    {
+                        <table id="example" class="table-bordered table table-striped table-condensed dataTables_scroll" style="font-size:12px">
+                            <thead>
+                                <tr>
+
+                                    <th>Terminal ID</th>
+                                    <th>Device ID</th>
+                                    <th>Make</th>
+                                    <th>Serial Number</th>
+                                    <th>Model Number</th>
+                                    <th>Terminal Type</th>
+                                    <th>Custodian</th>
+                                    <th>Custodian Alert Email </th>
+                                    <th>Custodian Alert Mobile</th>
+                                    <th>Is Active</th>
+                                    <th>Entry By</th>
+                                    <th>Entry Time</th>
+                                    <th>Updated By</th>
+                                    <th>Update Time</th>
+                                    <th>Check & Approve</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @if (ViewBag.list != null)
+                                {
+
+                                    foreach (var item in ViewBag.list)
+                                    {
+                                        <tr>
+
+
+                                            <td>@item.TerminalID</td>
+                                            <td>@item.DeviceId</td>
+                                            <td>@item.Make</td>
+                                            <td>@item.SerialNumber</td>
+                                            <td>@item.ModelNumber</td>
+                                            <td>@item.TerminalType</td>
+                                            <td>@item.Custodian</td>
+                                            <td>@item.CustodianAlertEmail</td>
+                                            <td>@item.CustodianAlertMobile</td>
+                                            <td>
+                                                @if (item.IsActive == true)
+                                                {
+                                                    <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                                }
+                                            </td>
+                                            <td>@item.EntryBy</td>
+
+                                            <td>@Convert.ToDateTime(item.EntryTime).ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                            <td>@item.UpdateBy</td>
+                                            @if (item.UpdateTime != null)
+                                            {
+                                                <td>
+                                                    @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            <td>
+
+                                                @if (!user.AccountName.Equals(item.EntryBy) && !user.AccountName.Equals(item.UpdateBy))
+                                                {
+                                                    if (item.ApproveStat == BankDashboard.Common.Constants.SaveStatus || item.ApproveStat == BankDashboard.Common.Constants.ModifyStatus)
+                                                    {
+                                                        <a href="/Dashboard/DeviceList?id=@item.ID"><span style="color:green"><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:#808080"><i class="glyphicon glyphicon-pencil"></i></span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                <a href="/Dashboard/DeviceList?id=@item.ID&ed=2"><span><i class="glyphicon glyphicon-pencil"></i>...</span></a>
+                                            </td>
+                                        </tr>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>No data in the table.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <table id="example" class="table-bordered table table-striped table-condensed dataTables_scroll" style="font-size:12px">
+                            <thead>
+                                <tr>
+
+                                    <th>Terminal ID</th>
+                                    <th>Device ID</th>
+                                    <th>Make</th>
+                                    <th>Serial Number</th>
+                                    <th>Model Number</th>
+                                    <th>Terminal Type</th>
+                                    <th>Custodian</th>
+                                    <th>Custodian Alert Email </th>
+                                    <th>Custodian Alert Mobile</th>
+                                    <th>Is Active</th>
+                                    <th>Entry By</th>
+                                    <th>Entry Time</th>
+                                    <th>Updated By</th>
+                                    <th>Update Time</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @if (ViewBag.list != null)
+                                {
+
+                                    foreach (var item in ViewBag.list)
+                                    {
+                                        <tr>
+
+
+                                            <td>@item.TerminalID</td>
+                                            <td>@item.DeviceId</td>
+                                            <td>@item.Make</td>
+                                            <td>@item.SerialNumber</td>
+                                            <td>@item.ModelNumber</td>
+                                            <td>@item.TerminalType</td>
+                                            <td>@item.Custodian</td>
+                                            <td>@item.CustodianAlertEmail</td>
+                                            <td>@item.CustodianAlertMobile</td>
+                                            <td>
+                                                @if (item.IsActive == true)
+                                                {
+                                                    <span style="color:green;font-size:16px"><i class="glyphicon glyphicon-ok"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="color:red;font-size:16px"><i class="glyphicon glyphicon-remove"></i></span>
+                                                }
+                                            </td>
+                                            <td>@item.EntryBy</td>
+
+                                            <td>@Convert.ToDateTime(item.EntryTime).ToString("dd/MMM/yyyy hh:mm tt")</td>
+                                            <td>@item.UpdateBy</td>
+                                            @if (item.UpdateTime != null)
+                                            {
+                                                <td>
+                                                    @item.UpdateTime.ToString("dd/MMM/yyyy hh:mm tt")
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+
+                                        </tr>
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>No data in the table.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function clicked(msg) {
+        debugger
+        if (confirm(msg)) {
+
+        } else {
+            event.preventDefault();
+        }
+    }
+</script>
